@@ -99,4 +99,32 @@ LIMIT 10;
 --
 SELECT *
 FROM app_store_apps
-WHERE name ILIKE ('%halloween%', '%zombie%')
+WHERE name ILIKE ('%halloween%', '%zombie
+				  
+				  
+				  
+				  WITH  both_stores_cte AS (SELECT 
+						 name, 
+						 rating, 
+						 price::decimal, 
+						 'app_store_apps' AS location, 
+						 5000.00 AS monthly_revenue,
+						 CASE WHEN price::decimal = 0 THEN 25000 ELSE price::decimal*10000 END AS cost_to_buy,
+						 content_rating, 
+						 review_count::integer,
+						 primary_genre,
+						 1+(ROUND(CEILING(rating * 4)/4, 2)*2) * 12 AS longevity_months
+						 FROM app_store_apps
+						 UNION ALL
+						 SELECT 
+						 	name, 
+						 	rating, 
+						 	price::money::decimal, 
+						 	'play_store_apps' AS location,
+						 	5000.00 AS monthly_revenue,
+						    CASE WHEN price::money::decimal = 0 THEN 25000 ELSE price::money::decimal*10000 END AS cost_to_buy,
+						 	content_rating,
+						  	review_count::integer,
+						 	genres AS primary_genre,
+						    1+(ROUND(CEILING(rating * 4)/4, 2)*2) * 12 AS longevity_months
+						 FROM play_store_apps)
